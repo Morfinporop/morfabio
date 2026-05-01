@@ -124,6 +124,15 @@ export const getPlatformIcon = (platform: string, size = 20, color = 'currentCol
     case 'spotify': return <SpotifyIcon size={size} color={color} />;
     case 'patreon': return <PatreonIcon size={size} color={color} />;
     case 'vk': return <VKIcon size={size} color={color} />;
+    case 'facebook': 
+    case 'reddit': 
+    case 'snapchat': 
+    case 'pinterest': 
+    case 'whatsapp': 
+    case 'medium': 
+    case 'behance': 
+    case 'dribbble': 
+      return <WebsiteIcon size={size} color={color} />;
     case 'email': return <EmailIcon size={size} color={color} />;
     default: return <WebsiteIcon size={size} color={color} />;
   }
@@ -143,6 +152,14 @@ export const getPlatformColor = (platform: string): string => {
     spotify: '#1DB954',
     patreon: '#FF424D',
     vk: '#0077FF',
+    facebook: '#1877F2',
+    reddit: '#FF4500',
+    snapchat: '#FFFC00',
+    pinterest: '#E60023',
+    whatsapp: '#25D366',
+    medium: '#00AB6C',
+    behance: '#1769FF',
+    dribbble: '#EA4C89',
     email: '#EA4335',
     website: '#6366f1',
   };
@@ -162,6 +179,14 @@ export const PLATFORMS = [
   { id: 'spotify', name: 'Spotify', color: '#1DB954' },
   { id: 'patreon', name: 'Patreon', color: '#FF424D' },
   { id: 'vk', name: 'VKontakte', color: '#0077FF' },
+  { id: 'facebook', name: 'Facebook', color: '#1877F2' },
+  { id: 'reddit', name: 'Reddit', color: '#FF4500' },
+  { id: 'snapchat', name: 'Snapchat', color: '#FFFC00' },
+  { id: 'pinterest', name: 'Pinterest', color: '#E60023' },
+  { id: 'whatsapp', name: 'WhatsApp', color: '#25D366' },
+  { id: 'medium', name: 'Medium', color: '#00AB6C' },
+  { id: 'behance', name: 'Behance', color: '#1769FF' },
+  { id: 'dribbble', name: 'Dribbble', color: '#EA4C89' },
   { id: 'email', name: 'Email', color: '#EA4335' },
   { id: 'website', name: 'Website', color: '#6366f1' },
 ];

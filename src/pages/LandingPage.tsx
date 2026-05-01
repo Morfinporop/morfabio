@@ -67,7 +67,7 @@ export default function LandingPage({ onLogin, onViewDemo }: Props) {
       <nav className="relative z-20 border-b border-white/5 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <BioLinkLogo size={30} />
+            <img src="/images/logo.png" alt="BioLink" className="w-8 h-8" />
             <span className="text-white font-bold text-lg">BioLink</span>
           </div>
           <div className="flex items-center gap-3">

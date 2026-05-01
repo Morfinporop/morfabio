@@ -10,13 +10,33 @@ interface Props {
 export default function BioPage({ username, onBack }: Props) {
   const { users } = useStore();
   const [animIn, setAnimIn] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
 
   useEffect(() => {
+    if (user?.musicUrl) {
+      setShowWelcome(true);
+    } else {
+      setTimeout(() => setAnimIn(true), 50);
+    }
+  }, [user]);
+
+  const handleEnter = () => {
+    setShowWelcome(false);
     setTimeout(() => setAnimIn(true), 50);
-  }, []);
+    if (audioRef.current) {
+      audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+    }
+  };
+
+  const handleClose = () => {
+    window.close();
+    setTimeout(() => {
+      onBack();
+    }, 100);
+  };
 
   if (!user) {
     return (
@@ -45,6 +65,65 @@ export default function BioPage({ username, onBack }: Props) {
   const enabledLinks = user.links.filter(l => l.enabled).sort((a, b) => a.order - b.order);
   const accent = user.accentColor || '#6366f1';
 
+  // Welcome screen for music
+  if (showWelcome && user?.musicUrl) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden flex items-center justify-center">
+        {/* Blur background */}
+        <div className="absolute inset-0 backdrop-blur-3xl bg-black/60" />
+        
+        {/* Animated gradient */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-600 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 text-center px-6 max-w-md">
+          <div className="mb-8">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-bounce" style={{ animationDuration: '2s' }}>
+              <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-black text-white mb-3">Добро пожаловать</h2>
+            <p className="text-gray-400 text-sm mb-2">На странице {user.displayName}</p>
+            <p className="text-gray-500 text-xs">Эта страница содержит фоновую музыку</p>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleEnter}
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/50 hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-3"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              Открыть
+            </button>
+            <button
+              onClick={handleClose}
+              className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:-translate-y-1 active:translate-y-0"
+            >
+              Закрыть
+            </button>
+          </div>
+
+          <p className="text-gray-600 text-xs mt-6">
+            Нажимая "Открыть" вы разрешаете воспроизведение музыки
+          </p>
+        </div>
+
+        {/* Hidden audio */}
+        {user.musicUrl && (
+          <audio ref={audioRef} loop className="hidden">
+            <source src={user.musicUrl} />
+          </audio>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
       {/* Custom background image or gradient */}
@@ -60,9 +139,9 @@ export default function BioPage({ username, onBack }: Props) {
         />
       ) : null}
       
-      {/* Background music */}
-      {user.musicUrl && (
-        <audio ref={audioRef} autoPlay loop className="hidden">
+      {/* Background music - only if not shown in welcome screen */}
+      {user.musicUrl && !showWelcome && (
+        <audio ref={audioRef} loop className="hidden">
           <source src={user.musicUrl} />
         </audio>
       )}
@@ -111,7 +190,13 @@ export default function BioPage({ username, onBack }: Props) {
               }}
             >
               {user.avatar ? (
-                <img src={user.avatar} alt={user.displayName} className="w-full h-full object-cover" />
+                <img 
+                  src={user.avatar} 
+                  alt={user.displayName} 
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  style={{ imageRendering: 'auto' }}
+                />
               ) : (
                 user.displayName.charAt(0).toUpperCase()
               )}
